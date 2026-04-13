@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IR Tatbikat Servisi — Denetim Sabahı Hazır Olun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --dark: #0f0f0f;
+    --panel: #141414;
+    --border: #1f1f1f;
+    --red: #e8291c;
+    --red-dim: #8b1810;
+    --amber: #f5a623;
+    --text: #e8e8e2;
+    --muted: #6b6b65;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* GRID OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,41,28,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,41,28,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--red);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--red);
+    padding: 0.6rem 1.4rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #ff3320; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 3rem 5rem;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: clamp(8rem, 18vw, 18rem);
+    font-weight: 700;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(232,41,28,0.08);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-content { max-width: 780px; position: relative; z-index: 2; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid var(--red-dim);
+    padding: 0.4rem 0.9rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  h1 {
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--red);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #a0a09a;
+    max-width: 560px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--black);
+    background: var(--red);
+    padding: 1rem 2.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(232,41,28,0.35); }
+
+  .btn-secondary {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 1rem 2rem;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  /* STATS BAR */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .stat-item {
+    padding: 2rem 3rem;
+    border-right: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s forwards;
+  }
+  .stat-item:nth-child(1) { animation-delay: 0.1s; }
+  .stat-item:nth-child(2) { animation-delay: 0.2s; }
+  .stat-item:nth-child(3) { animation-delay: 0.3s; border-right: none; }
+
+  .stat-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+  .stat-number span { color: var(--red); }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* SECTION COMMONS */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 3rem;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 500px;
+    margin-bottom: 3.5rem;
+  }
+
+  /* PAIN SECTION */
+  .pain-section {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    max-width: 900px;
+  }
+
+  .pain-item {
+    background: var(--panel);
+    padding: 2rem 2.2rem;
+    display: flex;
+    gap: 1.2rem;
+    transition: background 0.2s;
+  }
+  .pain-item:hover { background: #161616; }
+
+  .pain-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .pain-text strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .pain-text p {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* BENEFITS */
+  .benefits-section { background: var(--black); }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1000px;
+  }
+
+  .benefit-card {
+    border: 1px solid var(--border);
+    padding: 2.2rem;
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .benefit-card:hover {
+    border-color: var(--red-dim);
+    transform: translateY(-3px);
+  }
+  .benefit-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .benefit-card:hover::before { transform: scaleX(1); }
+
+  .benefit-number {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    margin-bottom: 1.5rem;
+  }
+
+  .benefit-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+    line-height: 1.3;
+  }
+
+  .benefit-body {
+    font-family: var(--mono);
+    font-size: 0.73rem;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  /* PRICING */
+  .pricing-section {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 960px;
+    border: 1px solid var(--border);
+  }
+
+  .price-card {
+    padding: 2.8rem 2.2rem;
+    border-right: 1px solid var(--border);
+    background: var(--panel);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .price-card:last-child { border-right: none; }
+  .price-card.featured {
+    background: #0e0e0e;
+    border-top: 3px solid var(--red);
+  }
+
+  .price-badge {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--red);
+    color: var(--black);
+    padding: 0.25rem 0.6rem;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-tier {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .price-name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-amount {
+    font-family: var(--mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .price-period {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .price-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 1.8rem;
+  }
+
+  .price-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2.2rem;
+  }
+
+  .price-features li {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: #908f89;
+    display: flex;
+    gap: 0.7rem;
+  }
+
+  .price-features li::before {
+    content: '→';
+    color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .price-cta {
+    display: block;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.9rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .price-cta:hover { border-color: var(--red); color: var(--text); }
+  .featured .price-cta {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--black);
+    font-weight: 700;
+  }
+  .featured .price-cta:hover { background: #ff3320; }
+
+  /* HOW IT WORKS */
+  .process-section { background: var(--black); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    max-width: 1000px;
+    border: 1px solid var(--border);
+    border-right: none;
+  }
+
+  .process-step {
+    padding: 2.2rem 1.8rem;
+    border-right: 1px solid var(--border);
+    background: var(--panel);
+    position: relative;
+  }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .step-body {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* FINAL CTA */
+  .cta-section {
+    background: var(--red);
+    padding: 7rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: 'HAZIR?';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(8rem, 20vw, 22rem);
+    font-weight: 800;
+    color: rgba(0,0,0,0.08);
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: -0.05em;
+  }
+
+  .cta-title {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 800;
+    color: var(--black);
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    line-height: 1.05;
+  }
+
+  .cta-sub {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: rgba(0,0,0,0.6);
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-dark {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--red);
+    background: var(--black);
+    padding: 1.1rem 2.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    position: relative;
+    z-index: 1;
+    transition: all 0.2s;
+  }
+  .btn-dark:hover { background: #1a1a1a; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+
+  .cta-note {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: rgba(0,0,0,0.45);
+    margin-top: 1.2rem;
+    letter-spacing: 0.08em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+    position: relative;
+  }
+
+  .footer-logo {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--red);
+    letter-spacing: 0.12em;
+  }
+
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    section { padding: 4rem 1.5rem; }
+    h1 { font-size: 2.5rem; }
+    .stats-bar { grid-template-columns: 1fr; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .pain-grid { grid-template-columns: 1fr; }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .price-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .process-steps { grid-template-columns: 1fr 1fr; border-right: none; }
+    .process-step { border-right: 1px solid var(--border); }
+    footer { flex-direction: column; gap: 0.8rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">// IR-TATBIKAT.SER</div>
+  <a href="#rezervasyon" class="nav-cta">Rezerve Et →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">BREACH</div>
+  <div class="hero-content">
+    <div class="hero-tag">Türkiye'nin İlk Hazır IR Tatbikat Servisi</div>
+    <h1>Denetim sabahı<br><em>sürprizle</em><br>uyanmayın.</h1>
+    <p class="hero-sub">
+      NIS2, BDDK BT Tebliği ve ISO 27001 tatbikat zorunluluğunu<br>
+      1 haftada, sabit fiyatla, kanıt belgesiyle tamamlayın.
+    </p>
+    <div class="hero-actions">
+      <a href="#rezervasyon" class="btn-primary">Tatbikat Rezerve Et →</a>
+      <a href="#paketler" class="btn-secondary">Paketlere Bak</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-number">48<span>sa</span></div>
+    <div class="stat-label">Rezervasyondan teslime</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">3<span>x</span></div>
+    <div class="stat-label">Büyük danışmanlıktan daha uygun</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">100<span>%</span></div>
+    <div class="stat-label">Denetim geçer kanıt belgesi</div>
+  </div>
+</div>
+
+<!-- PAIN -->
+<section class="pain-section">
+  <div class="section-tag">// Problem</div>
+  <div class="section-title">Herkes tatbikat<br>erteliyor. Neden?</div>
+  <p class="section-sub">Çünkü mevcut seçenekler ya çok pahalı, ya çok yavaş, ya da çok karmaşık.</p>
+  <div class="pain-grid">
+    <div class="pain-item">
+      <span class="pain-icon">💸</span>
+      <div class="pain-text">
+        <strong>Büyük danışmanlık firmalar</strong>
+        <p>Deloitte, PwC gibi firmalar aynı tatbikat için 30.000–100.000₺ alıyor. KOBİ bütçeleri karşılamıyor.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">⏳</span>
+      <div class="pain-text">
+        <strong>Proje süreci aylarca sürüyor</strong>
+        <p>Sözleşme, kapsam, planlama... Denetim tarihi geliyor, tatbikat hâlâ başlamamış.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">📄</span>
+      <div class="pain-text">
+        <strong>İç ekip senaryo yazamıyor</strong>
+        <p>Gerçekçi saldırı senaryosu kurmak uzmanlık istiyor. Çoğu ekipte bu bilgi yok.</p>
+      </div>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">🚨</span>
+      <div class="pain-text">
+        <strong>Denetimde kanıt yok</strong>
+        <p>BDDK, SPK ve sigorta şirketleri tatbikat belgesi istiyor. "Yaptık ama yazmadık" artık kabul edilmiyor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits-section">
+  <div class="section-tag">// Çözüm</div>
+  <div class="section-title">Tatbikatı biz yönetiriz.<br>Siz sadece hazır olun.</div>
+  <p class="section-sub">Sıfır kurulum, sıfır senaryo yazımı. Rezerve et, tarihi belirle, bağlan.</p>
+  <div class="benefits-grid">
+    <div class="benefit-card">
+      <div class="benefit-number">01 //</div>
+      <div class="benefit-title">Sektörüne Özel Senaryolar</div>
+      <p class="benefit-body">Finans, sağlık, enerji ve teknoloji sektörleri için hazır MITRE ATT&CK tabanlı gerçekçi saldırı senaryoları. Kurgusal değil, gerçek tehdit taktikleri.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-number">02 //</div>
+      <div class="benefit-title">Denetim Geçer Rapor</div>
+      <p class="benefit-body">Tatbikat sonunda BDDK BT Tebliği, NIS2 ve ISO 27001 uyum maddelerine atıfla hazırlanmış, denetçiye sunulabilir PDF rapor.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-number">03 //</div>
+      <div class="benefit-title">1 Haftada Teslim</div>
+      <p class="benefit-body">Rezervasyon → senaryo seçimi → tatbikat → rapor. Aylarca süren proje süreçleri yok. Acil denetim hazırlığı için bile yetişiyoruz.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-number">04 //</div>
+      <div class="benefit-title">Uzman Moderatör</div>
+      <p class="benefit-body">Her tatbikatı MITRE, NIST ve sektör frameworklerinde deneyimli bir detection & response uzmanı yönetiyor. Simülasyon değil, gerçek öğrenme.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-number">05 //</div>
+      <div class="benefit-title">Aksiyon Planı</div>
+      <p class="benefit-body">Rapor sadece bulgularla bitmiyor. Önceliklendirilmiş aksiyon maddeleri ve yönetim kuruluna sunulabilir yönetici özeti de ekleniyor.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-number">06 //</div>
+      <div class="benefit-title">Online veya Yüz Yüze</div>
+      <p class="benefit-body">Zoom, Teams veya yerinde — siz tercih edin. Hibrit ekipler için de tam destek. Ekip büyüklüğü fark etmez.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="process-section" style="background: var(--dark); border-top: 1px solid var(--border);">
+  <div class="section-tag">// Süreç</div>
+  <div class="section-title">4 adımda tamamlanır.</div>
+  <p class="section-sub" style="margin-bottom: 3rem;">Karmaşık kurulum yok. Gizlilik sözleşmesi imzalanır, gerisi bize kalır.</p>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">ADIM 01</div>
+      <div class="step-title">Rezervasyon & Brifing</div>
+      <p class="step-body">Online form doldurursunuz. Sektör, ekip büyüklüğü ve hedef frameworku belirtirsiniz. 24 saat içinde dönüş.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">ADIM 02</div>
+      <div class="step-title">Senaryo Seçimi</div>
+      <p class="step-body">Size özel 3 senaryo önerilir. Birini seçersiniz. Tatbikat günü ekip önceden senaryo görmez.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">ADIM 03</div>
+      <div class="step-title">Canlı Tatbikat</div>
+      <p class="step-body">Uzman moderatör yönetiminde 2-4 saatlik masabaşı tatbikat. Gerçek zamanlı karar alma ve iletişim testi.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">ADIM 04</div>
+      <div class="step-title">Rapor Teslimi</div>
+      <p class="step-body">48 saat içinde bulgular, aksiyon planı ve uyum belgesi teslim edilir. Denetçiye hazır.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="paketler">
+  <div class="section-tag">// Paketler</div>
+  <div class="section-title">Şeffaf fiyat.<br>Sürpriz yok.</div>
+  <p class="section-sub">Tüm paketler sabit fiyatlıdır. Ekip büyüklüğüne göre ek ücret yoktur.</p>
+  <div class="pricing-grid">
+
+    <div class="price-card">
+      <div class="price-tier">Giriş</div>
+      <div class="price-name">DRILL</div>
+      <div class="price-amount">₺15.000</div>
+      <div class="price-period">tek seferlik · KDV hariç</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>2 saatlik online tatbikat</li>
+        <li>1 saldırı senaryosu</li>
+        <li>5 katılımcıya kadar</li>
+        <li>PDF özet rapor</li>
+        <li>1 hafta içinde teslim</li>
+      </ul>
+      <a href="#rezervasyon" class="price-cta">Rezerve Et</a>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-badge">En Çok Tercih</div>
+      <div class="price-tier">Standart</div>
+      <div class="price-name">EXERCISE</div>
+      <div class="price-amount">₺35.000</div>
+      <div class="price-period">tek seferlik · KDV hariç</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>4 saatlik hybrid tatbikat</li>
+        <li>3 sektöre özel senaryo</li>
+        <li>15 katılımcıya kadar</li>
+        <li>Detaylı bulgular + aksiyon planı</li>
+        <li>NIS2 / BDDK uyum belgesi</li>
+        <li>Yönetici özeti (sunum formatı)</li>
+      </ul>
+      <a href="#rezervasyon" class="price-cta">Rezerve Et →</a>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Kurumsal</div>
+      <div class="price-name">PROGRAM</div>
+      <div class="price-amount">₺95.000</div>
+      <div class="price-period">yıllık · KDV hariç</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li>Yılda 4 tatbikat (çeyrek bazlı)</li>
+        <li>Sınırsız katılımcı</li>
+        <li>Tüm senaryo kütüphanesi</li>
+        <li>Yıllık olgunluk skoru raporu</li>
+        <li>BDDK / NIS2 denetim desteği</li>
+        <li>Öncelikli rezervasyon hattı</li>
+      </ul>
+      <a href="#rezervasyon" class="price-cta">Teklif Al</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section" id="rezervasyon">
+  <h2 class="cta-title">İlk 3 yer için<br>bu hafta rezerve açık.</h2>
+  <p class="cta-sub">Formu doldurun, 24 saat içinde dönelim. Taahhüt yok.</p>
+  <a href="mailto:tatbikat@sirketiniz.com?subject=IR%20Tatbikat%20Rezervasyonu" class="btn-dark">
+    Şimdi Rezerve Et →
+  </a>
+  <p class="cta-note">veya doğrudan iletişim: linkedin.com/in/profiliniz</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">// IR-TATBIKAT.SER</div>
+  <div class="footer-note">Detection & Response Uzmanı · Türkiye</div>
+</footer>
+
+</body>
+</html>
